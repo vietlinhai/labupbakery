@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Labup Bakery — Nướng mới mỗi sáng</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --plum:#2A1A2E;
+    --plum-soft:#3A2540;
+    --cream:#FBF3E4;
+    --butter:#F4C24B;
+    --berry:#D75E7C;
+    --pistachio:#8DA86A;
+    --ink:#241320;
+    --radius:26px;
+    --maxw:1180px;
+    --shadow:0 24px 50px -22px rgba(74,32,55,.45);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+
+  body{
+    font-family:"Space Grotesk",system-ui,sans-serif;
+    background:var(--cream);
+    color:var(--ink);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  h1,h2,h3{font-family:"Fraunces",Georgia,serif;line-height:1.03;font-weight:600}
+  a{color:inherit;text-decoration:none}
+  img{display:block;max-width:100%}
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+
+  .eyebrow{
+    font-family:"Space Grotesk",sans-serif;font-weight:600;
+    font-size:.74rem;letter-spacing:.26em;text-transform:uppercase;
+  }
+
+  /* scroll progress */
+  .progress{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--butter),var(--berry));z-index:100;transition:width .1s linear}
+
+  /* ---------- NAV ---------- */
+  nav{position:sticky;top:0;z-index:60;background:rgba(251,243,228,.8);backdrop-filter:blur(12px);border-bottom:1px solid rgba(42,26,46,.08)}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:72px}
+  .brand{display:flex;align-items:center;gap:4px;font-family:"Fraunces",serif;font-weight:900;font-size:1.55rem;letter-spacing:-.02em}
+  .brand .dot{color:var(--berry)}
+  .nav-links{display:flex;gap:30px;align-items:center;font-size:.95rem;font-weight:500}
+  .nav-links a{position:relative;padding:4px 0;transition:color .2s}
+  .nav-links a::after{content:"";position:absolute;left:0;bottom:-2px;width:0;height:2px;background:var(--berry);transition:width .28s}
+  .nav-links a:hover{color:var(--berry)}
+  .nav-links a:hover::after{width:100%}
+
+  .btn{
+    position:relative;overflow:hidden;
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--ink);color:var(--cream);
+    padding:13px 24px;border-radius:999px;
+    font-weight:600;font-size:.95rem;border:none;cursor:pointer;
+    transition:transform .2s ease, box-shadow .2s ease, background .2s;
+    box-shadow:0 8px 20px -8px rgba(36,19,32,.6);
+  }
+  .btn:hover{transform:translateY(-3px);box-shadow:0 16px 26px -10px rgba(215,94,124,.6);background:var(--berry)}
+  .btn::before{content:"";position:absolute;top:0;left:-120%;width:60%;height:100%;background:linear-gradient(120deg,transparent,rgba(255,255,255,.4),transparent);transform:skewX(-20deg)}
+  .btn:hover::before{animation:shine .8s ease}
+  @keyframes shine{to{left:130%}}
+  .btn.ghost{background:transparent;color:var(--ink);box-shadow:none;border:1.5px solid rgba(36,19,32,.25)}
+  .btn.ghost:hover{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+  .nav-toggle{display:none;background:transparent;border:none;font-size:1.4rem;cursor:pointer;color:var(--ink)}
+
+  /* ---------- HERO ---------- */
+  .hero{background:var(--plum);color:var(--cream);position:relative;overflow:hidden;padding:80px 0 100px}
+  .blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.55;z-index:1}
+  .blob.b1{width:520px;height:520px;background:var(--berry);top:-160px;left:-120px;animation:drift1 16s ease-in-out infinite}
+  .blob.b2{width:460px;height:460px;background:var(--butter);bottom:-180px;right:-120px;opacity:.4;animation:drift2 20s ease-in-out infinite}
+  @keyframes drift1{50%{transform:translate(60px,40px) scale(1.1)}}
+  @keyframes drift2{50%{transform:translate(-50px,-30px) scale(1.08)}}
+
+  .hero-grid{position:relative;z-index:3;display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+  .hero .eyebrow{color:var(--butter);margin-bottom:22px;display:inline-block}
+  .hero h1{font-size:clamp(3rem,8vw,6rem);font-weight:900;letter-spacing:-.03em;margin-bottom:24px}
+  .hero h1 em{font-style:italic;font-weight:500;color:var(--butter)}
+  .hero p.lead{font-size:1.16rem;max-width:44ch;color:rgba(251,243,228,.82);margin-bottom:34px}
+  .hero-cta{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-bottom:34px}
+  .hero-cta .btn{background:var(--butter);color:var(--ink)}
+  .hero-cta .btn:hover{background:var(--cream)}
+  .hero-cta .btn.ghost{color:var(--cream);border-color:rgba(251,243,228,.35)}
+  .hero-cta .btn.ghost:hover{background:var(--cream);color:var(--ink)}
+  .hero-stats{display:flex;gap:34px;flex-wrap:wrap}
+  .hero-stats div{display:flex;flex-direction:column}
+  .hero-stats b{font-family:"Fraunces",serif;font-size:1.9rem;color:var(--butter);line-height:1}
+  .hero-stats span{font-size:.85rem;color:rgba(251,243,228,.6);margin-top:4px}
+
+  /* hero image */
+  .hero-art{position:relative;display:flex;justify-content:center}
+  .hero-frame{
+    width:min(420px,82vw);aspect-ratio:4/5;border-radius:200px 200px 32px 32px;overflow:hidden;
+    box-shadow:0 50px 90px -30px rgba(0,0,0,.65);border:6px solid rgba(251,243,228,.9);
+    background:linear-gradient(135deg,#5a2d3f,#3a2540);
+    animation:bob 6s ease-in-out infinite;
+  }
+  .hero-frame img{width:100%;height:100%;object-fit:cover}
+  @keyframes bob{50%{transform:translateY(-16px)}}
+
+  .seal{position:absolute;right:-14px;bottom:34px;width:126px;height:126px;animation:spin 20s linear infinite;z-index:4}
+  .seal .seal-core{position:absolute;inset:0;margin:auto;width:56px;height:56px;border-radius:50%;background:var(--berry);display:flex;align-items:center;justify-content:center;font-size:1.6rem;box-shadow:0 6px 16px rgba(0,0,0,.35)}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .float-badge{position:absolute;background:var(--cream);color:var(--ink);border-radius:16px;padding:10px 16px;font-weight:600;font-size:.85rem;box-shadow:var(--shadow);display:flex;align-items:center;gap:8px;z-index:4}
+  .float-badge .em{font-size:1.2rem}
+  .fb1{top:6px;left:-6px;animation:bob 5s ease-in-out .4s infinite}
+  .fb2{bottom:-10px;left:24px;animation:bob 5.6s ease-in-out .9s infinite}
+
+  /* ---------- MARQUEE ---------- */
+  .marquee{background:var(--butter);color:var(--ink);overflow:hidden;padding:16px 0}
+  .marquee-track{display:flex;width:max-content;animation:slide 24s linear infinite}
+  .marquee:hover .marquee-track{animation-play-state:paused}
+  .marquee span{font-family:"Fraunces",serif;font-weight:600;font-style:italic;font-size:1.5rem;padding:0 26px;display:inline-flex;align-items:center;gap:26px}
+  .marquee span::after{content:"✦";font-style:normal;color:var(--berry)}
+  @keyframes slide{to{transform:translateX(-50%)}}
+
+  /* ---------- SECTIONS ---------- */
+  section.block{padding:100px 0}
+  .sec-head{margin-bottom:54px;max-width:640px}
+  .sec-head .eyebrow{color:var(--berry);margin-bottom:16px;display:block}
+  .sec-head h2{font-size:clamp(2.2rem,5vw,3.5rem);letter-spacing:-.02em}
+  .sec-head p{margin-top:16px;color:#6a5560;font-size:1.08rem;max-width:52ch}
+
+  /* ---------- MENU ---------- */
+  .menu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:30px}
+  .card{background:#fff;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;transition:transform .3s cubic-bezier(.2,.7,.3,1),box-shadow .3s}
+  .card:hover{transform:translateY(-10px);box-shadow:0 40px 60px -26px rgba(74,32,55,.5)}
+  .card-media{position:relative;aspect-ratio:4/3;overflow:hidden;background:linear-gradient(135deg,#f3e7d0,#e9d9c2)}
+  .card-media img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.3,1)}
+  .card:hover .card-media img{transform:scale(1.08)}
+  .badge{position:absolute;top:14px;left:14px;background:rgba(251,243,228,.94);color:var(--ink);font-weight:600;font-size:.76rem;padding:6px 12px;border-radius:999px;backdrop-filter:blur(4px)}
+  .card-body{padding:24px 24px 26px;flex:1;display:flex;flex-direction:column}
+  .card-body h3{font-size:1.42rem;letter-spacing:-.01em;margin-bottom:8px}
+  .card-body p{font-size:.96rem;color:#6a5560;flex:1}
+  .price{margin-top:18px;display:flex;align-items:center;justify-content:space-between}
+  .price .amt{font-family:"Fraunces",serif;font-weight:600;font-size:1.35rem;color:var(--berry)}
+  .price .unit{font-size:.82rem;color:#94808a}
+
+  /* ---------- REVIEWS ---------- */
+  .reviews{background:var(--plum);color:var(--cream);position:relative;overflow:hidden}
+  .reviews .sec-head .eyebrow{color:var(--butter)}
+  .reviews .sec-head p{color:rgba(251,243,228,.72)}
+  .rev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+  .rev{background:var(--plum-soft);border-radius:var(--radius);padding:32px 30px;display:flex;flex-direction:column;transition:transform .3s,background .3s}
+  .rev:hover{transform:translateY(-8px);background:#43284b}
+  .rev .quote{font-family:"Fraunces",serif;font-size:3.6rem;line-height:.6;color:var(--butter);height:28px}
+  .stars{color:var(--butter);letter-spacing:3px;margin:18px 0 8px}
+  .rev p.text{font-size:1.06rem;color:rgba(251,243,228,.9);margin-bottom:24px;flex:1}
+  .rev-person{display:flex;align-items:center;gap:14px}
+  .avatar{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"Fraunces",serif;font-weight:600;font-size:1.2rem;color:var(--ink);flex-shrink:0}
+  .rev-person b{font-weight:600;font-size:1rem;display:block}
+  .rev-person small{color:rgba(251,243,228,.55);font-size:.83rem}
+
+  /* ---------- CONTACT ---------- */
+  .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:center}
+  .info-list{display:flex;flex-direction:column;gap:26px}
+  .info-item{display:flex;gap:18px;align-items:flex-start}
+  .info-item .ic{width:50px;height:50px;flex-shrink:0;border-radius:14px;background:var(--plum);color:var(--butter);display:flex;align-items:center;justify-content:center;font-size:1.3rem;transition:transform .3s}
+  .info-item:hover .ic{transform:rotate(-8deg) scale(1.06)}
+  .info-item .lbl{font-weight:600;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--berry)}
+  .info-item .val{font-size:1.1rem;font-weight:500}
+  .info-item .val small{display:block;color:#6a5560;font-weight:400;font-size:.9rem;margin-top:2px}
+
+  .contact-card{background:linear-gradient(150deg,var(--berry),#b8496a);color:var(--cream);border-radius:var(--radius);box-shadow:var(--shadow);padding:44px;position:relative;overflow:hidden}
+  .contact-card::after{content:"🍰";position:absolute;right:-10px;bottom:-16px;font-size:8rem;opacity:.14}
+  .contact-card h3{font-size:2.1rem;margin-bottom:10px;position:relative}
+  .contact-card p{opacity:.94;margin-bottom:26px;position:relative}
+  .hours{border-top:1px solid rgba(251,243,228,.3);padding-top:22px;margin-top:26px;position:relative}
+  .hours-row{display:flex;justify-content:space-between;font-size:.94rem;padding:7px 0}
+  .hours-row span:last-child{font-weight:600}
+  .contact-card .btn{background:var(--butter);color:var(--ink);width:100%;justify-content:center;position:relative}
+  .contact-card .btn:hover{background:var(--cream)}
+
+  /* ---------- FOOTER ---------- */
+  footer{background:var(--ink);color:var(--cream);padding:56px 0 34px}
+  .foot-top{display:flex;justify-content:space-between;align-items:flex-start;gap:30px;flex-wrap:wrap;padding-bottom:34px;border-bottom:1px solid rgba(251,243,228,.16)}
+  .foot-brand{font-family:"Fraunces",serif;font-weight:900;font-size:2rem}
+  .foot-brand .dot{color:var(--berry)}
+  .foot-brand p{font-family:"Space Grotesk",sans-serif;font-weight:400;font-size:.95rem;opacity:.7;margin-top:10px;max-width:34ch}
+  .socials{display:flex;gap:12px}
+  .socials a{width:44px;height:44px;border-radius:50%;border:1px solid rgba(251,243,228,.3);display:flex;align-items:center;justify-content:center;transition:background .25s,color .25s,transform .25s}
+  .socials a:hover{background:var(--butter);color:var(--ink);border-color:var(--butter);transform:translateY(-3px)}
+  .foot-bottom{padding-top:24px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:.85rem;opacity:.6}
+
+  /* ---------- ANIMATION UTILITIES ---------- */
+  .reveal{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.3,1)}
+  .reveal.in{opacity:1;transform:none}
+
+  .load{opacity:0;transform:translateY(24px);animation:fadeUp .9s cubic-bezier(.2,.7,.3,1) forwards}
+  .d1{animation-delay:.1s}.d2{animation-delay:.25s}.d3{animation-delay:.4s}.d4{animation-delay:.55s}.d5{animation-delay:.7s}
+  @keyframes fadeUp{to{opacity:1;transform:none}}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:900px){
+    .hero-grid{grid-template-columns:1fr;gap:40px}
+    .hero-art{order:-1}
+    .menu-grid{grid-template-columns:repeat(2,1fr)}
+    .rev-grid{grid-template-columns:1fr}
+    .contact-grid{grid-template-columns:1fr;gap:36px}
+    .nav-links{display:none}
+    .nav-links.open{display:flex;flex-direction:column;position:absolute;top:72px;left:0;right:0;background:var(--cream);padding:20px 24px;gap:16px;border-bottom:1px solid rgba(42,26,46,.1)}
+    .nav-toggle{display:inline-flex}
+  }
+  @media (max-width:560px){
+    section.block{padding:70px 0}
+    .menu-grid{grid-template-columns:1fr}
+    .foot-top{flex-direction:column}
+    .contact-card{padding:32px 26px}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .seal,.marquee-track,.hero-frame,.blob,.fb1,.fb2,.load{animation:none!important}
+    .load{opacity:1;transform:none}
+    .reveal{opacity:1;transform:none;transition:none}
+    html{scroll-behavior:auto}
+  }
+  :focus-visible{outline:3px solid var(--berry);outline-offset:3px;border-radius:8px}
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top">Labup<span class="dot">.</span></a>
+    <div class="nav-links" id="navLinks">
+      <a href="#menu">Thực đơn</a>
+      <a href="#reviews">Cảm nhận</a>
+      <a href="#contact">Liên hệ</a>
+      <a href="#contact" class="btn">Đặt bánh ngay</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Mở menu">☰</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero" id="top">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow load d1">Tiệm bánh thủ công · Từ 2024</span>
+      <h1 class="load d2">Nướng mới mỗi sáng,<br><em>ngọt từ trái tim.</em></h1>
+      <p class="lead load d3">Labup Bakery làm từng mẻ bánh nhỏ bằng bơ thật, bột lên men chậm và một chút vui thích. Không chất bảo quản — chỉ có hương thơm vừa ra lò.</p>
+      <div class="hero-cta load d4">
+        <a href="#menu" class="btn">Xem thực đơn</a>
+        <a href="#contact" class="btn ghost">Tìm đường đến tiệm →</a>
+      </div>
+      <div class="hero-stats load d5">
+        <div><b>4.000+</b><span>Chiếc bánh / tuần</span></div>
+        <div><b>18h</b><span>Ủ bột lên men</span></div>
+        <div><b>07:00</b><span>Mẻ đầu ra lò</span></div>
+      </div>
+    </div>
+    <div class="hero-art load d3">
+      <div class="hero-frame">
+        <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80" alt="Bánh kem dâu tươi của Labup Bakery" />
+      </div>
+      <div class="float-badge fb1"><span class="em">🧈</span> Bơ Pháp thật 100%</div>
+      <div class="float-badge fb2"><span class="em">⭐</span> 4.9/5 · 1.200 đánh giá</div>
+      <div class="seal" aria-hidden="true">
+        <svg viewBox="0 0 126 126">
+          <defs><path id="cir" d="M63,63 m-48,0 a48,48 0 1,1 96,0 a48,48 0 1,1 -96,0"/></defs>
+          <text font-family="Space Grotesk, sans-serif" font-size="11.5" letter-spacing="2.5" fill="#F4C24B" font-weight="700">
+            <textPath href="#cir" startOffset="0">· NƯỚNG MỚI MỖI NGÀY · LABUP BAKERY </textPath>
+          </text>
+        </svg>
+        <span class="seal-core">🥐</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- MARQUEE -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span>Bơ thật</span><span>Lên men chậm</span><span>Ra lò mỗi sáng</span><span>Không chất bảo quản</span><span>Mẻ nhỏ · làm tay</span>
+    <span>Bơ thật</span><span>Lên men chậm</span><span>Ra lò mỗi sáng</span><span>Không chất bảo quản</span><span>Mẻ nhỏ · làm tay</span>
+  </div>
+</div>
+
+<!-- MENU -->
+<section class="block" id="menu">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Thực đơn</span>
+      <h2>Những chiếc bánh chúng tôi thương nhất</h2>
+      <p>Mỗi món một mẻ nhỏ, làm mới trong ngày. Hết là hết — nên ghé sớm nhé.</p>
+    </div>
+
+    <div class="menu-grid">
+
+      <article class="card reveal">
+        <div class="card-media">
+          <span class="badge">Bán chạy</span>
+          <img loading="lazy" src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=700&q=80" alt="Bánh sừng bò bơ Pháp" />
+        </div>
+        <div class="card-body">
+          <h3>Sừng bò bơ Pháp</h3>
+          <p>72 lớp bột cán tay, ủ lạnh 18 giờ. Vỏ giòn tan, ruột xốp mềm thơm nức mùi bơ.</p>
+          <div class="price"><span class="amt">28.000đ</span><span class="unit">/ chiếc</span></div>
+        </div>
+      </article>
+
+      <article class="card reveal">
+        <div class="card-media">
+          <img loading="lazy" src="https://images.unsplash.com/photo-1569864358642-9d1684040f43?auto=format&fit=crop&w=700&q=80" alt="Bánh macaron nhiều màu" />
+        </div>
+        <div class="card-body">
+          <h3>Macaron sáu vị</h3>
+          <p>Vỏ hạnh nhân mỏng giòn, nhân ganache mềm mịn. Dâu, matcha, socola, chanh dây, vani, dừa.</p>
+          <div class="price"><span class="amt">22.000đ</span><span class="unit">/ cái</span></div>
+        </div>
+      </article>
+
+      <article class="card reveal">
+        <div class="card-media">
+          <img loading="lazy" src="https://images.unsplash.com/photo-1550617931-e17a7b70dce2?auto=format&fit=crop&w=700&q=80" alt="Bánh su kem" />
+        </div>
+        <div class="card-body">
+          <h3>Su kem trứng muối</h3>
+          <p>Vỏ choux giòn rụm, kem custard vani beo béo hoà chút mặn của trứng muối. Bơm ngay khi khách gọi.</p>
+          <div class="price"><span class="amt">25.000đ</span><span class="unit">/ cái</span></div>
+        </div>
+      </article>
+
+      <article class="card reveal">
+        <div class="card-media">
+          <span class="badge">Signature</span>
+          <img loading="lazy" src="https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fit=crop&w=700&q=80" alt="Bánh tiramisu cà phê" />
+        </div>
+        <div class="card-body">
+          <h3>Tiramisu cà phê</h3>
+          <p>Bánh champagne thấm espresso Đà Lạt, lớp mascarpone mịn như mây, phủ cacao nguyên chất.</p>
+          <div class="price"><span class="amt">45.000đ</span><span class="unit">/ hũ</span></div>
+        </div>
+      </article>
+
+      <article class="card reveal">
+        <div class="card-media">
+          <span class="badge">Đặt trước</span>
+          <img loading="lazy" src="https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=700&q=80" alt="Bánh kem dâu tươi" />
+        </div>
+        <div class="card-body">
+          <h3>Kem dâu bông tuyết</h3>
+          <p>Cốt bông lan Nhật mềm ẩm, kem tươi ít ngọt và dâu Mộc Châu tươi xếp từng lớp mọng nước.</p>
+          <div class="price"><span class="amt">220.000đ</span><span class="unit">/ ổ nhỏ</span></div>
+        </div>
+      </article>
+
+      <article class="card reveal">
+        <div class="card-media">
+          <img loading="lazy" src="https://images.unsplash.com/photo-1549931319-a545dcf3bc73?auto=format&fit=crop&w=700&q=80" alt="Bánh mì hoa cúc brioche" />
+        </div>
+        <div class="card-body">
+          <h3>Bánh mì hoa cúc</h3>
+          <p>Brioche bện tay thơm mùi hoa cam, ruột vàng ươm xé từng sợi. Ngon nhất khi còn ấm.</p>
+          <div class="price"><span class="amt">65.000đ</span><span class="unit">/ ổ</span></div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="block reviews" id="reviews">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Cảm nhận của khách</span>
+      <h2>Người ta quay lại vì mùi bơ</h2>
+      <p>Hơn 4.000 chiếc bánh ra lò mỗi tuần, và đây là điều khách kể lại.</p>
+    </div>
+
+    <div class="rev-grid">
+
+      <div class="rev reveal">
+        <div class="quote">“</div>
+        <div class="stars">★★★★★</div>
+        <p class="text">Sừng bò ở đây giòn thật sự, cắn vào là rơi vụn đầy bàn. Sáng nào đi làm mình cũng ghé mua hai chiếc, một cho mình một cho đồng nghiệp.</p>
+        <div class="rev-person">
+          <div class="avatar" style="background:var(--butter)">M</div>
+          <div><b>Minh Anh</b><small>Khách quen · Quận 1</small></div>
+        </div>
+      </div>
+
+      <div class="rev reveal">
+        <div class="quote">“</div>
+        <div class="stars">★★★★★</div>
+        <p class="text">Đặt bánh kem dâu cho sinh nhật con, cả nhà khen nức nở. Kem không ngọt gắt, dâu tươi mọng. Quan trọng là nhìn rất xinh, đúng gu mình luôn.</p>
+        <div class="rev-person">
+          <div class="avatar" style="background:var(--berry);color:var(--cream)">T</div>
+          <div><b>Thu Hà</b><small>Đặt bánh sinh nhật</small></div>
+        </div>
+      </div>
+
+      <div class="rev reveal">
+        <div class="quote">“</div>
+        <div class="stars">★★★★★</div>
+        <p class="text">Là dân nghiện cà phê nên mình khó tính với tiramisu lắm. Vậy mà Labup làm mình gật gù — vị espresso rõ, mascarpone mịn, không bị ngậy. Điểm 10!</p>
+        <div class="rev-person">
+          <div class="avatar" style="background:var(--pistachio)">Q</div>
+          <div><b>Quốc Bảo</b><small>Food blogger</small></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="block" id="contact">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Ghé tiệm</span>
+      <h2>Tìm chúng tôi ở đây</h2>
+    </div>
+
+    <div class="contact-grid">
+      <div class="info-list reveal">
+        <div class="info-item">
+          <div class="ic">📍</div>
+          <div><div class="lbl">Địa chỉ</div><div class="val">142 Nguyễn Trãi, P. Bến Thành, Quận 1, TP.HCM <small>Ngay góc ngã tư, có mùi bơ dẫn đường</small></div></div>
+        </div>
+        <div class="info-item">
+          <div class="ic">📞</div>
+          <div><div class="lbl">Đặt bánh</div><div class="val">0912 345 678 <small>Nhận đặt bánh kem trước 24 giờ</small></div></div>
+        </div>
+        <div class="info-item">
+          <div class="ic">✉️</div>
+          <div><div class="lbl">Email</div><div class="val">xinchao@labupbakery.vn</div></div>
+        </div>
+        <div class="info-item">
+          <div class="ic">🚲</div>
+          <div><div class="lbl">Giao hàng</div><div class="val">Miễn phí ship trong bán kính 3km <small>Từ đơn 150.000đ</small></div></div>
+        </div>
+      </div>
+
+      <div class="contact-card reveal">
+        <h3>Ghé một lần, thương cả năm.</h3>
+        <p>Đặt trước để chắc chắn có bánh nóng dành riêng cho bạn.</p>
+        <a href="tel:0912345678" class="btn">Gọi đặt bánh ngay</a>
+        <div class="hours">
+          <div class="hours-row"><span>Thứ 2 – Thứ 6</span><span>06:30 – 21:00</span></div>
+          <div class="hours-row"><span>Thứ 7 – Chủ nhật</span><span>07:00 – 22:00</span></div>
+          <div class="hours-row"><span>Ra lò mẻ đầu</span><span>07:00 mỗi sáng</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        Labup<span class="dot">.</span>
+        <p>Tiệm bánh nhỏ, làm bằng tay và bằng thương. Nướng mới mỗi sáng tại Sài Gòn.</p>
+      </div>
+      <div class="socials">
+        <a href="#" aria-label="Facebook">f</a>
+        <a href="#" aria-label="Instagram">◎</a>
+        <a href="#" aria-label="TikTok">♪</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Labup Bakery. Làm với bơ &amp; tình yêu.</span>
+      <span>142 Nguyễn Trãi, Q1, TP.HCM</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // mobile menu
+  var toggle = document.getElementById('navToggle');
+  var links = document.getElementById('navLinks');
+  toggle.addEventListener('click', function(){ links.classList.toggle('open'); });
+  links.addEventListener('click', function(e){ if(e.target.tagName==='A') links.classList.remove('open'); });
+
+  // scroll progress bar
+  var bar = document.getElementById('progress');
+  window.addEventListener('scroll', function(){
+    var h = document.documentElement;
+    var pct = h.scrollTop / (h.scrollHeight - h.clientHeight) * 100;
+    bar.style.width = pct + '%';
+  }, {passive:true});
+
+  // scroll reveal with stagger
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){
+        var siblings = Array.prototype.slice.call(en.target.parentNode.children);
+        var i = siblings.indexOf(en.target);
+        en.target.style.transitionDelay = (Math.min(i,5) * 0.09) + 's';
+        en.target.classList.add('in');
+        io.unobserve(en.target);
+      }
+    });
+  }, {threshold:.14});
+  document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+</script>
+
+</body>
+</html>
